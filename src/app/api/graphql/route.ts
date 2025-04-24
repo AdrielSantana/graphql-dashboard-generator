@@ -297,12 +297,6 @@ async function suggestVisualization(
   data: Record<string, unknown>,
   nlQuery: string
 ): Promise<VisualizationSuggestion> {
-  console.log("Calling LLM to suggest visualization...");
-
-  // Limit the data sent to the LLM to avoid exceeding context limits
-  // Simple approach: stringify and truncate. Better: select key fields/rows.
-  const dataSample = JSON.stringify(data, null, 2).substring(0, 2000); // Truncate sample
-
   // Refined Prompt:
   const prompt = `
     Você é um assistente especialista em visualização de dados.
@@ -314,11 +308,6 @@ async function suggestVisualization(
     A seguinte consulta GraphQL:
     \`\`\`graphql
     ${query}
-    \`\`\`
-
-    E uma amostra dos dados retornados (primeiros registros/resumo):
-    \`\`\`json
-    ${dataSample}
     \`\`\`
 
     Analise a consulta e a estrutura dos dados.

@@ -77,7 +77,7 @@ export function DashboardItemCard({
               </TooltipContent>
             </Tooltip>
           </TooltipProvider>
-          <CardDescription className="text-xs text-muted-foreground truncate">
+          <CardDescription className="text-xs text-muted-foreground">
             {item.visualizationSuggestion?.suggestion?.reasoning || "-"}
           </CardDescription>
         </div>
