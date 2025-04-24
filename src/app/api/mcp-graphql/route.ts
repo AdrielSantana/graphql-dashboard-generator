@@ -4,8 +4,6 @@ import type { NextRequest } from "next/server";
 // 1. Define Schema (SDL)
 const typeDefs = /* GraphQL */ `
   type Query {
-    "A simple greeting field"
-    hello: String!
     "A list of sample users"
     users: [User!]!
     "Sample sales data by category"
@@ -69,7 +67,6 @@ const mockStatuses = [
 // 3. Define Resolvers
 const resolvers = {
   Query: {
-    hello: () => "Hello from GraphQL Yoga!",
     users: () => mockUsers,
     salesByCategory: () => mockSales,
     signupsOverTime: () => mockSignups,

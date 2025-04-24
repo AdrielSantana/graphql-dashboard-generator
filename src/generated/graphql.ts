@@ -22,8 +22,6 @@ export type CategorySales = {
 
 export type Query = {
   __typename?: 'Query';
-  /** A simple greeting field */
-  hello: Scalars['String']['output'];
   /** Sample sales data by category */
   salesByCategory: Array<CategorySales>;
   /** Sample user signups over time */

@@ -185,23 +185,23 @@ async function translateNLtoGraphQL(
 
   // Refined Prompt:
   const prompt = `
-    Given the following GraphQL schema context:
+    Dado o seguinte contexto do schema GraphQL:
     ---SCHEMA START---
-    ${schemaContext || "Schema context not available."}
+    ${schemaContext || "Contexto do schema não disponível."}
     ---SCHEMA END---
 
-    Translate the following natural language query into a valid GraphQL query based *only* on the provided schema.
+    Traduza a seguinte consulta em linguagem natural para uma consulta GraphQL válida baseada *apenas* no schema fornecido.
     
-    Example:
-    Natural Language: "show me all users"
-    GraphQL Query: 
+    Exemplo:
+    Linguagem Natural: "mostre todos os usuários"
+    Consulta GraphQL: 
     \`\`\`graphql
     query GetAllUsers {\n  users {\n    id\n    name\n    email\n  }\n}\`\`\`
-    (End of Example)
+    (Fim do Exemplo)
 
-    Now, translate this query:
-    Natural Language: "${naturalLanguageQuery}"
-    GraphQL Query:
+    Agora, traduza esta consulta:
+    Linguagem Natural: "${naturalLanguageQuery}"
+    Consulta GraphQL:
   `;
   // Instructions like "Return only the GraphQL query." are often added as system messages or handled by parsing.
 
@@ -294,7 +294,8 @@ export type VisualizationSuggestion = {
 // Use the defined return type
 async function suggestVisualization(
   query: string,
-  data: Record<string, unknown>
+  data: Record<string, unknown>,
+  nlQuery: string
 ): Promise<VisualizationSuggestion> {
   console.log("Calling LLM to suggest visualization...");
 
@@ -304,36 +305,41 @@ async function suggestVisualization(
 
   // Refined Prompt:
   const prompt = `
-    You are an expert data visualization assistant.
-    Given the following GraphQL query:
+    Você é um assistente especialista em visualização de dados.
+    Dada a seguinte consulta em linguagem natural:
+    \`\`\`natural
+    ${nlQuery}
+    \`\`\`
+
+    A seguinte consulta GraphQL:
     \`\`\`graphql
     ${query}
     \`\`\`
 
-    And a sample of the data returned (first few records/summary):
+    E uma amostra dos dados retornados (primeiros registros/resumo):
     \`\`\`json
     ${dataSample}
     \`\`\`
 
-    Analyze the query and data structure.
-    1. Suggest a concise, descriptive title for a chart representing this data (e.g., "Sales by Category", "User Signups Trend").
-    2. Suggest the most appropriate visualization type from this list: ["barchart", "linechart", "piechart", "table"]. Default to "table" if no chart is suitable.
-    3. Suggest the data fields (keys from the JSON data sample) for mapping: 
-       - "category": Primary category/label/x-axis.
-       - "value": Primary numerical value/count/y-axis.
-       - "time": Time-based axis (for LineChart).
-    4. Provide brief reasoning for the chart type choice.
+    Analise a consulta e a estrutura dos dados.
+    1. Sugira um título conciso e descritivo para um gráfico representando estes dados (ex: "Vendas por Categoria", "Tendência de Cadastros de Usuários").
+    2. Caso não especificado pelo usuário, sugira o tipo de visualização mais apropriado desta lista: ["barchart", "linechart", "piechart", "table"]. Use "table" como padrão se nenhum gráfico for adequado.
+    3. Sugira os campos de dados (chaves da amostra JSON) para mapeamento: 
+       - "category": Categoria principal/rótulo/eixo-x.
+       - "value": Valor numérico principal/contagem/eixo-y.
+       - "time": Eixo baseado em tempo (para LineChart).
+    4. Forneça uma breve explicação para a escolha do tipo de gráfico.
     
-    Return the suggestion ONLY as a valid JSON object matching this exact structure:
+    Retorne a sugestão APENAS como um objeto JSON válido seguindo esta estrutura exata:
     { 
       "suggestion": { 
-        "title": "<concise_descriptive_title>", 
-        "type": "<chart_type>", 
-        "reasoning": "<brief_explanation>",
+        "title": "<título_descritivo_conciso>", 
+        "type": "<tipo_gráfico>", 
+        "reasoning": "<explicação_breve>",
         "fieldMapping": { 
-          "category": "<field_name_for_category_or_x_axis>", 
-          "value": "<field_name_for_value_or_y_axis>",
-          "time": "<field_name_for_time_series_or_null>"
+          "category": "<nome_campo_para_categoria_ou_eixo_x>", 
+          "value": "<nome_campo_para_valor_ou_eixo_y>",
+          "time": "<nome_campo_para_series_temporais_ou_null>"
         }
       }
     }
@@ -432,7 +438,8 @@ export async function POST(request: NextRequest) {
           // Pass the generated query and the data part of the result
           visualization = await suggestVisualization(
             generatedQuery,
-            executionResult.data
+            executionResult.data,
+            nlQuery
           );
         }
 

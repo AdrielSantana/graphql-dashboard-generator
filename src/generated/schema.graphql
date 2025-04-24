@@ -4,9 +4,6 @@ type CategorySales {
 }
 
 type Query {
-  """A simple greeting field"""
-  hello: String!
-
   """Sample sales data by category"""
   salesByCategory: [CategorySales!]!
 
