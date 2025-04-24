@@ -1,5 +1,5 @@
 import { createYoga, createSchema } from "graphql-yoga";
-import type { NextRequest } from "next/server";
+import { NextRequest } from "next/server";
 
 // 1. Define Schema (SDL)
 const typeDefs = /* GraphQL */ `
@@ -76,9 +76,7 @@ const resolvers = {
 };
 
 // 4. Create the Yoga instance
-const { handleRequest } = createYoga<{
-  req: NextRequest;
-}>({
+const { handleRequest } = createYoga({
   schema: createSchema({
     typeDefs,
     resolvers,
@@ -96,5 +94,14 @@ const { handleRequest } = createYoga<{
   fetchAPI: { Response, Request },
 });
 
-// 5. Export handlers for GET and POST
-export { handleRequest as GET, handleRequest as POST };
+export const GET = (
+  req: NextRequest,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  context: any
+) => handleRequest(req, context);
+
+export const POST = (
+  req: NextRequest,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  context: any
+) => handleRequest(req, context);
