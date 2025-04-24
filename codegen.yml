@@ -1,0 +1,21 @@
+# yaml-language-server: $schema=https://the-guild.dev/graphql/codegen/config.schema.json
+overwrite: true
+schema: "http://localhost:3000/api/mcp-graphql" # Point to the running mock endpoint during generation
+documents: null # We aren't generating hooks from frontend .graphql files (yet)
+generates:
+  # Generate the schema SDL file
+  src/generated/schema.graphql:
+    plugins:
+      - "schema-ast"
+    config:
+      commentDescriptions: true # Optional: include comments from schema as descriptions
+
+  # Keep TypeScript types generation if still needed elsewhere, otherwise remove
+  src/generated/graphql.ts:
+    plugins:
+      - "typescript"
+      - "typescript-operations"
+    config:
+      # Optional: configure generated types further if needed
+      # Example: avoidOptionals: true
+      # See https://the-guild.dev/graphql/codegen/plugins/typescript/typescript for options 

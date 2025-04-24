@@ -1,0 +1,37 @@
+type CategorySales {
+  category: String!
+  sales: Int!
+}
+
+type Query {
+  """A simple greeting field"""
+  hello: String!
+
+  """Sample sales data by category"""
+  salesByCategory: [CategorySales!]!
+
+  """Sample user signups over time"""
+  signupsOverTime: [TimePoint!]!
+
+  """Sample distribution of user statuses"""
+  userStatusDistribution: [StatusCount!]!
+
+  """A list of sample users"""
+  users: [User!]!
+}
+
+type StatusCount {
+  count: Int!
+  status: String!
+}
+
+type TimePoint {
+  count: Int!
+  date: String!
+}
+
+type User {
+  email: String
+  id: ID!
+  name: String!
+}
